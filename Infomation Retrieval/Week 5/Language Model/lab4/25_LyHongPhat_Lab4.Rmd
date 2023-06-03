@@ -1,0 +1,217 @@
+---
+title: "Lab 4 - Language Model"
+date: "2023/03/28"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Code mẫu
+
+Để thực hiện bài lab này bạn sẽ sử dụng phần code mẫu trong file **lab4.zip** và viết thêm các hàm hoặc các lớp để thực hiện các công việc theo yêu cầu bên dưới. Bài lab này sẽ sử dụng lại và làm tiếp theo bài lab2.
+
+## Cách nộp bài làm
+
+Bạn sẽ nộp lại project đã làm (**chỉ bao gồm các file .java**, **không bao gồm các thư viện .jar** trong project). Ngoài ra, bạn cần nộp file báo cáo chứa java code và kết quả dùng file **Lab4.Rmd** được dung cấp sẵn. Đây là file **Rmarkdown**. **Markdown** là cú pháp đơn giản cho phép dễ dạng tạo các báo. **Rmarkdown** tích hợp code R với cú pháp **Markdown** để có thể tạo ra các báo cáo vừa có text, code và kết quả. Ở đây ta không dùng code R mà dùng java. Xem thêm cú pháp của Rmarkdown ở <https://github.com/rstudio/cheatsheets/raw/master/rmarkdown-2.0.pdf> để biết cách viết. Dùng **RStudio** để soạn thảo và viết báo cáo. Khi cần biên dịch ra file .html thì nhấp vào **Knit** và chọn **Knit to html**. Nếu cần tìm hiểu thêm về **Rmarkdown** thì có thể xem ở <https://bookdown.org/yihui/rmarkdown/>.
+
+## Yêu cầu
+
+### Lập chỉ mục bộ sưu tập tài liệu (document collection)
+
+Đầu tiên, bạn cần thực thi file **LuceneBuildIndex.java** trong package **search** của project để lập chỉ mục bộ sưu tập tài liệu cho sẵn (file **example_corpus.gz** trong thư mục **docs** của project).
+
+Tiếp theo, bạn sẽ hiện thực một vài hàm xếp hạng dùng Lucene. Bạn sẽ phải duyệt qua posting list của từng từ (term) trong query từ index đã xây dựng được. Bạn cần hiện thực các hàm `QLJMSmoothing`, `QLDirichletSmoothing` trong file **LuceneSearchIndex.java**.
+
+### 1. Hiện thực mô hình Query Likelihood with Jelinek-Mercer smoothing dùng chỉ mục đã tạo
+
+Hàm xếp hạng này được mô tả bởi công thức sau: $$f(d,q) = \sum_{w \in q, d} freq(w, q) \times log \left(1 + \frac{1 - \lambda}{\lambda} \times \frac{freq(w, d)}{|d| \times p(w|C)} \right)$$ Trong đó:
+
+-   $f(d, q)$ là giá trị mô tả mức độ liên quan của tài liệu $d$ với truy vấn $q$,
+
+-   $freq(w, q)$ và $freq(w, d)$ là lần lượt là tần số của từ $w$ trong truy vấn $q$ và tài liệu $d$,
+
+-   $\lambda$ là tham số của mô hình.
+
+-   $p(w|C)$ là mô hình ngôn ngữ của cả collection $C$, được tính bằng xác suất từ $w$ xuất hiện trong cả collection $C$ so với tất cả các từ khác.
+
+```{java}
+/**
+ * Hiện thực mô hình Query Likelihood with Jelinek-Mercer smoothing
+ * 
+ * @param index   Lucene index reader
+ * @param field   index field để tìm query
+ * @param queryTerms  Danh sách các query term
+ * @param lambda  Tham số lambda (0.1 <= lambda <= 0.9) của Jelinek-Mercer smoothing
+ *            
+ * @return  Danh sách kết quả (sắp xếp theo độ liên quan)
+ */
+public static List<SearchResult> QLJMSmoothing(IndexReader index, String field, List<String> queryTerms,
+		double lambda) throws IOException {
+	// Viết phần hiện thực của bạn ở đây
+	// Bạn có thể viết thêm các hàm phụ trợ nếu cần thiết
+
+	List<SearchResult> rs = null;
+
+	if (!queryTerms.isEmpty()) {
+		rs = new ArrayList<SearchResult>();
+		HashMap<Integer, Double> hm = new HashMap<Integer, Double>();
+		long C = index.getSumTotalTermFreq("text");
+
+		for (String term : queryTerms) {
+			PostingsEnum posting = MultiTerms.getTermPostingsEnum(index, field, new BytesRef(term),
+					PostingsEnum.POSITIONS);
+			if (posting != null) { // nếu term không có trong document nào cả, posting sẽ là null
+				int docid;
+				double ratio_wc; // p(w|C)
+				int f_wq; // freq(w,q)
+				int f_wd; // freq(w,d)
+				ratio_wc = (double) index.totalTermFreq(new Term("text", term)) / C;
+				f_wq = freqQ(term, queryTerms);
+
+				while ((docid = posting.nextDoc()) != PostingsEnum.NO_MORE_DOCS) {
+					// số từ của document hiện tại
+					int doclen = 0;
+					TermsEnum termsEnum = index.getTermVector(docid, field).iterator();
+					while (termsEnum.next() != null) {
+						doclen += termsEnum.totalTermFreq();
+					}
+					f_wd = posting.freq();
+
+					double score = f_wq * Math.log(1 + ((1 - lambda) / lambda) * (f_wd / (doclen * ratio_wc)));
+
+					if (!hm.containsKey(docid))
+						hm.put(docid, score);
+					else
+						hm.put(docid, score + hm.get(docid));
+				}
+			}
+		}
+
+		for (int docid : hm.keySet()) {
+			String docno = LuceneUtils.getDocno(index, "docno", docid);
+			rs.add(new SearchResult(docid, docno, hm.get(docid)));
+		}
+	}
+
+	rs.sort(Comparator.comparing(SearchResult::getScore).reversed());
+	return rs;
+}
+
+```
+
+Kết quả sau khi chạy với input đã cho là (copy kết quả paste vào đây, giữa cặp dấu `...`):
+
+    0  0 ACM-1835650  1   7.21936244    QLJMSmoothing
+    0  0 ACM-1148204  2   7.11576146    QLJMSmoothing
+    0  0 ACM-1390416  3   7.09817631    QLJMSmoothing
+    0  0 ACM-1009026  4   6.97302820    QLJMSmoothing
+    0  0 ACM-2609503  5   6.77832798    QLJMSmoothing
+    0  0 ACM-383972   6   6.75201767    QLJMSmoothing
+    0  0 ACM-1572140  7   6.70157814    QLJMSmoothing
+    0  0 ACM-511717   8   6.53229244    QLJMSmoothing
+    0  0 ACM-1277796  9   6.39384737    QLJMSmoothing
+    0  0 ACM-564408   10  6.33519731    QLJMSmoothing
+
+### 2. Hiện thực mô hình Query Likelihood with Dirichlet smoothing dùng chỉ mục đã tạo
+
+Hàm xếp hạng này được mô tả bởi công thức sau: $$f(d,q) = \sum_{w \in q, d} freq(w, q) \times log \left(1 + \frac{freq(w, d)}{\mu \times p(w|C)} \right) + |q| \times log \left(\frac{\mu}{\mu + |d|}\right)$$ Trong đó:
+
+-   $f(d, q)$ là giá trị mô tả mức độ liên quan của tài liệu $d$ với truy vấn $q$,
+
+-   $freq(w, q)$ và $freq(w, d)$ là lần lượt là tần số của từ $w$ trong truy vấn $q$ và tài liệu $d$,
+
+-   $|q|$ và $|d|$ lần lượt là độ dài của truy vấn $q$ và tài liệu $d$.
+
+-   $\mu$ là tham số của mô hình.
+
+-   $p(w|C)$ là mô hình ngôn ngữ của cả collection $C$, được tính bằng xác suất từ $w$ xuất hiện trong cả collection $C$ so với tất cả các từ khác.
+
+```{java}
+/**
+ * Hiện thực mô hình Query Likelihood with Dirichlet smoothing
+ *
+ * @param index   Lucene index reader
+ * @param field   index field để tìm query
+ * @param queryTerms  Danh sách các query term        
+ * @param mu  Tham số mu (500 <= mu <= 5000) của Dirichlet smoothing
+ *            
+ * @return Danh sách kết quả (sắp xếp theo độ liên quan)
+ */
+public static List<SearchResult> QLDirichletSmoothing(IndexReader index, String field, List<String> queryTerms,
+		double mu) throws IOException {
+	// Viết phần hiện thực của bạn ở đây
+	// Bạn có thể viết thêm các hàm phụ trợ nếu cần thiết
+	List<SearchResult> rs = null;
+
+	if (!queryTerms.isEmpty()) {
+		rs = new ArrayList<SearchResult>();
+		HashMap<Integer, Double> hm = new HashMap<Integer, Double>();
+		long C = index.getSumTotalTermFreq("text");
+
+		for (String term : queryTerms) {
+			PostingsEnum posting = MultiTerms.getTermPostingsEnum(index, field, new BytesRef(term),
+					PostingsEnum.POSITIONS);
+			if (posting != null) { // nếu term không có trong document nào cả, posting sẽ là null
+				int docid;
+				double ratio_wc; // p(w|C)
+				int f_wq; // freq(w,q)
+				int f_wd; // freq(w,d)
+				ratio_wc = (double) index.totalTermFreq(new Term("text", term)) / C;
+				f_wq = freqQ(term, queryTerms);
+
+				while ((docid = posting.nextDoc()) != PostingsEnum.NO_MORE_DOCS) {
+					// số từ của document hiện tại
+					int doclen = 0;
+					TermsEnum termsEnum = index.getTermVector(docid, field).iterator();
+					while (termsEnum.next() != null) {
+						doclen += termsEnum.totalTermFreq();
+					}
+					f_wd = posting.freq();
+
+					double score = f_wq * Math.log(1 + (f_wd / (mu * ratio_wc)))
+							+ queryTerms.size() * Math.log(mu / (mu + doclen));
+
+					if (!hm.containsKey(docid))
+						hm.put(docid, score);
+					else
+						hm.put(docid, score + hm.get(docid));
+				}
+			}
+		}
+
+		for (int docid : hm.keySet()) {
+			String docno = LuceneUtils.getDocno(index, "docno", docid);
+			rs.add(new SearchResult(docid, docno, hm.get(docid)));
+		}
+	}
+
+	rs.sort(Comparator.comparing(SearchResult::getScore).reversed());
+	return rs;
+}
+
+//	Đếm tần số xuất hiện của từ word trong query
+public static int freqQ(String word, List<String> query) {
+	int freqWq = 0;
+	for (String t : query) {
+		if (t.equals(word)) {
+			freqWq = freqWq + 1;
+		}
+	}
+	return freqWq;
+}
+```
+
+Kết quả sau khi chạy với input đã cho là (copy kết quả paste vào đây, giữa cặp dấu `...`):
+
+    0  0 ACM-1148204  1   0.20161638 QLDirichletSmoothing
+    0  0 ACM-1835650  2   0.19288713 QLDirichletSmoothing
+    0  0 ACM-1009026  3   0.18084783 QLDirichletSmoothing
+    0  0 ACM-1390416  4   0.17253170 QLDirichletSmoothing
+    0  0 ACM-383972   5   0.15825019 QLDirichletSmoothing
+    0  0 ACM-2609503  6   0.12497460 QLDirichletSmoothing
+    0  0 ACM-564408   7   0.11995524 QLDirichletSmoothing
+    0  0 ACM-1277920  8   0.09792442 QLDirichletSmoothing
+    0  0 ACM-2009998  9   0.09073804 QLDirichletSmoothing
+    0  0 ACM-1277796  10  0.08817104 QLDirichletSmoothing

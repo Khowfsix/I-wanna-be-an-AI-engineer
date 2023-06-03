@@ -1,0 +1,23 @@
+Bài kiểm tra số 3
+Sử dụng tập dữ liệu trên Kaggle để xây dựng mô hình phân lớp bằng ANN có độ chính xác trên 80%
+
+Yêu cầu:
+- Viết comment cụ thể trong file Code
+- Nộp thêm 1 file txt giải thích kết quả
+
+Sinh viên thực hiện:
+Họ tên: Lý Hồng Phát
+MSSV: 20110692
+
+Giải thích bài làm:
+Sử dụng tập dữ liệu adult.csv; 
+
+Dữ liệu phân loại thu nhập của 1 cá nhân
+Thu nhập của một cá nhân là kết quả của nhiều yếu tố khác nhau. 
+Theo trực giác, nó bị ảnh hưởng bởi trình độ học vấn, tuổi tác, giới tính, nghề nghiệp của cá nhân, v.v.
+
+Sử dụng mô hình ANN phân loại thu nhập của từng cá nhân với 
+Đầu ra: 0 là thu nhập thấp hơn 50k và 1 là thu nhập lớn hơn 50k
+
+Giá trị đầu ra kết quả thực: bao gồm 2 lớp 0 và 1
+Độ chính xác mô hình: 82.54%

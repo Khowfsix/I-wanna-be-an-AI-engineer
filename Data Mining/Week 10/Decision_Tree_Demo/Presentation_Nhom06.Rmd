@@ -1,0 +1,640 @@
+---
+title: "Presentation"
+author: "Nhóm 6"
+date: "12/12/2021"
+output:
+  slidy_presentation: default
+  beamer_presentation: default
+  ioslides_presentation: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+
+##         Đề tài : Phân tích các yếu tố ảnh hưởng đến tim mạch
+
+
+### Bố cục gồm 3 phần :
+  - **Phần 1** : Giới Thiệu tổng quan về đề tài
+  - **Phần 2** : Tóm tắt về tập dữ liệu
+  - **Phần 3** : Phân tích dữ liệu
+
+
+
+## Phần 1 : Giới thiệu tổng quan về đề tài
+- **Tổng quan về đề tài** : Suy tim là một sự kiện phổ biến do CVDs gây ra và tập dữ liệu này có 11 yếu tố có thể được sử dụng để dự đoán bệnh tim có thể xảy ra. Những người mắc bệnh tim mạch hoặc những người có nguy cơ tim mạch cao (do sự hiện diện của một hoặc nhiều yếu tố nguy cơ như tăng huyết áp, tiểu đường, tăng lipid máu hoặc bệnh đã có sẵn) cần được phát hiện và quản lý sớm, phân tích các yếu tố riêng biệt , tương quan giữa chúng giúp chúng ta biết thêm nhiều thông tin quan trọng , trong đó mô hình học máy có thể giúp ích rất nhiều trong việc chuẩn đoán bệnh tim .
+- **Nguồn dữ liệu**: https://www.kaggle.com/fedesoriano/heart-failure-prediction
+- Tập dữ liệu này được tạo bằng cách kết hợp các tập dữ liệu khác nhau đã có sẵn một cách độc lập nhưng chưa được kết hợp trước đó. Trong bộ dữ liệu này, 5 bộ dữ liệu về tim được kết hợp trên 11 đặc điểm chung :
+  + Cleveland: 303 quan sát
+  + Hungarian: 294 quan sát
+  + Switzerland: 123 quan sát
+  + Long Beach VA: 200 quan sát
+  + Stalog (Heart) Data Set: 270 quan sát
+- *Bộ dữ liệu cuối cùng*: 918 quan sát 
+- Mọi bộ dữ liệu được sử dụng có thể được tìm thấy trong Chỉ mục bộ dữ liệu bệnh tim từ Kho lưu trữ Máy học UCI trên liên kết sau:https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/
+- Tác giả của dữ liệu :
+  + Viện Tim mạch Hungary. Budapest: Andras Janosi, M.D.
+  + Bệnh viện Đại học, Zurich, Thụy Sĩ: William Steinbrunn, M.D.
+  + Bệnh viện Đại học, Basel, Thụy Sĩ: Matthias Pfisterer, M.D.
+  + V.A. Trung tâm Y tế, Long Beach và Tổ chức Phòng khám Cleveland: Robert Detrano, M.D., Ph.D.
+
+
+## Phần 2 : Dữ liệu
+- library("knitr")
+- library(tidyverse)
+- library(dplyr)
+- library(ggplot2)
+- library(psych)
+- library(car)
+- library(Hmisc)
+- library(sqldf)
+- library(naniar)
+- library(e1071)
+- library(caret)
+- library(cowplot)
+- library(gridExtra)
+
+### Import các thư viện :
+```{r include=FALSE}
+library("knitr")
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(psych)
+library(car)
+library(Hmisc)
+library(sqldf)
+library(naniar)
+library(e1071)
+library(caret)
+library(cowplot)
+library(gridExtra)
+library(RANN)
+library(na.tools)
+library(gbm)
+library(class)
+library(caTools)
+library(rpart)
+```
+
+
+
+## Các biến :
+
+- Tập dữ liệu có gồm có 12 biến: Age, Sex, ChestPainType, RestingBP, Choleserol, FastingBS, RestingECG, MaxHR, ExerciseAngina, Oldpeak, ST_Slope, HeartDisease
+- Tập dữ liệu bao gồm 918 đối tượng
+- Biến phân loại (category/qualitative variable):
+  + Sex, ChestPainType, RestingECG, ExerciseAngina, ST_Slope ,FastingBS, HeartDisease
+- Biến số (numeric/quantitative variable):
+  + Age, RestingBP, Choleserol, MaxHR, Oldpeak
+
+
+## Mô tả tên các biến và ý nghĩa :
+
+- **Age**: Tuổi của các bệnh nhân (years)
+
+- **Sex**: giới tính của bệnh nhân (M:Male, F: Female)
+
+- **ChestPainType**: các kiểu đau ngực (TA: Typical Angina, ATA: Atypical Angina, NAP: Non-Anginal Pain, ASY: Asymptomatic )
+
+- **RestingBP**: huyết áp nghỉ ngơi (mm Hg)
+
+- **serum Cholesterol**: Mức cholesterol trong huyết thanh của một người đại diện cho tổng lượng cholesterol trong máu của họ (mm/dl)
+
+- **FastingBS**: đường huyết lúc đói (1: nếu BS lúc đói > 120 mg/dl, 0:otherwise)
+
+- **RestingECG**: kết quả điện tâm đồ lúc nghỉ (Normal: bình thường, ST: có bất thường sóng ST-T (đảo ngược sóng T và/hoặc ST chênh lên hoặc giảm> 0,05 mV), LVH: hiển thị phì đại thất trái có thể xảy ra hoặc xác định theo tiêu chí của Estes)
+
+- **MaxHR**: nhịp tim tối đa đạt được (giữa 60 và 202)
+
+- **ExerciseAngina**: đau thắt ngực do tập thể dục (Y: yes, N: No)
+
+- **Oldpeak**: oldpeak =ST(giá trị số được đo bằng độ trầm cảm)
+
+- **ST_Slope**: nhịp tim lúc tập thể dục(Up: dốc lên, Flat: phẳng, Down: dốc xuống)
+
+- **HeartDisease**: kết quả đầu ra (1: bệnh tim, 0: Bình thường)
+
+
+
+## Load Data
+```{r}
+dataheart <- read.csv("heart.csv")
+str(dataheart)
+head(dataheart, 10)
+```
+
+
+
+## Tóm tắt về tập dữ liệu
+```{r}
+summary(dataheart)
+```
+
+
+
+## Phần 3 : phân tích dữ liệu
+
+### 1.Các yếu tố ảnh hưởng đến bệnh tim có phân bố như thế nào ? 
+    - Biến dự đoán (X) : 11 biến (Age,Sex,ChestPainType,RestingBP,Cholesterol,FastingBS,RestingECG,MaxHR,ExerciseAngina,Oldpeak,ST_Slope )
+    - Biến kết quả (Y) : count
+    - Ý nghĩa : từ phân tích này giúp chúng ta hiểu được phân bố của các yếu tố ảnh hưởng đến bệnh tim .
+    - Biểu đồ có thể sử dụng : histogram 
+    - Phương pháp sử dụng : thống kê mô tả (Mô tả các đặc trưng của một phân bố cho biến số , Mô tả các đặc trưng của một phân bố cho biến phân loại).
+
+#### phân tích thăm dò đối với các biến phân loại  
+```{r}
+# có phải giới tính nam có nguy cơ mắc bệnh tim cao hơn 
+a <- ggplot(data = dataheart, 
+ mapping = aes(x = HeartDisease ,fill = Sex)) +
+ geom_bar() + 
+ facet_grid(~Sex)
+
+# Nhịp tim lúc tập thể dục (biến quan trọng) Nhận xét : những người flat khi tập thể dục có nguy cơ mắc bệnh tim cao
+b <- ggplot(data = dataheart, 
+ mapping = aes(x = HeartDisease ,fill = ST_Slope)) +
+ geom_bar() + 
+ facet_grid(~ST_Slope)
+
+# Đau thắt cơ ngực do tập thể dục . Những người đau thắt cơ ngực khi tập thể dục có nguy cơ mắc 
+c <- ggplot(data = dataheart, 
+ mapping = aes(x = HeartDisease ,fill = ExerciseAngina)) +
+ geom_bar() + 
+ facet_grid(~ExerciseAngina)
+
+# Điện tâm đồ : Khi bình thường(số người mắc bệnh tim chỉ nhỉnh hơn chút so với số người không mắc bệnh còn khi phát hiện bất thường thì số người mắc bệnh gần gấp đôi so với số người khô
+d <- ggplot(data = dataheart, 
+ mapping = aes(x = HeartDisease ,fill = RestingECG)) +
+ geom_bar() + 
+ facet_grid(~RestingECG)
+
+# đường huyết lúc đói -> đường huyết lúc đói bằng 1 nguy cơ mắc bệnh tim cao
+e <- ggplot(data = dataheart, 
+ mapping = aes(x = HeartDisease ,fill = FastingBS)) +
+ geom_bar() + 
+ facet_grid(~FastingBS)
+
+# Các loại đau ngực
+f <- ggplot(data = dataheart, 
+ mapping = aes(x = HeartDisease ,fill = ChestPainType)) +
+ geom_bar() + 
+ facet_grid(~ChestPainType)
+
+grid.arrange(b, a, c, ncol=2, layout_matrix =rbind(c(1,1), c(2,3)))
+
+grid.arrange(f, d, e, ncol=2, layout_matrix =rbind(c(1,1), c(2,3)))
+```
+
+
+#### Nhận xét với các biến phân loại
+  - Thông qua các barplot, chúng ta có một số nhận xét cơ bản sau:
+    + Trong bộ dữ liệu đa số là nam và số lượng bị bệnh tim thì nhiều hơn số lượng không bị bệnh; số lượng nữ bị bệnh ít hơn số lượng nữ không bị bệnh
+    + Các bệnh nhân hầu hết là bị đau ngực ko triệu chứng
+    + Đa số các bệnh nhân thì có kết quả điện tâm đồ lúc nghỉ ngơi là bình thường
+    + Các bệnh nhân bị bệnh tim thì đau thắt ngực khi tập thể dục (khoảng hơn 300) nhiều hơn so với các bệnh nhân bị bệnh tim không đau thắt ngực do tập thể dục (khoảng gần 200)
+    + Và đa số các bệnh nhân có độ dốc nhịp tim phẳng khi tập thể dục
+
+    
+
+
+#### Phân tích thăm dò đối với các biến số
+```{r}
+# Tuổi ảnh hưởng đến bệnh tim
+p1 <- ggplot(data = dataheart, 
+ mapping = aes(x = Age)) +
+ geom_histogram(bins=30) + 
+ facet_grid(~HeartDisease)
+
+# Huyết áp luc nghỉ ngơi
+p2 <- ggplot(data = dataheart, 
+ mapping = aes(x = RestingBP)) +
+ geom_histogram(bins=30) + 
+ facet_grid(~HeartDisease)
+
+# Cholesterol ảnh hưởng thế nào tới bệnh tim
+p3 <- ggplot(data = dataheart, 
+ mapping = aes(x = Cholesterol)) +
+ geom_histogram(bins=30) + 
+ facet_grid(~HeartDisease)
+
+# Nhịp tim tối đa -> những người mắc bệnh tim thì nhịp tim tối đa thấp hơn bình thường
+p4 <- ggplot(data = dataheart, 
+ mapping = aes(x = MaxHR)) +
+ geom_histogram(bins=30) + 
+ facet_grid(~HeartDisease)
+
+# độ trầm cảm
+p5 <- ggplot(data = dataheart, 
+ mapping = aes(x = Oldpeak)) +
+ geom_histogram(bins=30) + 
+ facet_grid(~HeartDisease)
+
+grid.arrange(p1, p2, p3, ncol=2, layout_matrix =rbind(c(1,1), c(2,3)))
+
+grid.arrange(p4, p5, ncol=2, layout_matrix =rbind(c(1,1), c(2,3)))
+
+```
+
+
+
+#### Nhận xét qua phân tích thăm dò các biến số
+  - Đối với tuổi thì ta thấy độ tuổi dễ mắc bệnh tim nhiều nhất là nằm trong khoảng từ 55 đến 65
+  - Đối với RestingBP, ta thấy có một quan sát có huyết áp lúc nghỉ ngơi bằng 0 (đây là một điều không thể).
+  - Với Cholesterol thì ta cũng thấy có rất nhiều quan sát có cholesterol huyết thanh bằng 0.
+  - Nhịp tim tối đa thì có giá trị phân bố từ 60 đến 202, không có quan sát nào bất thường.
+  - Và cuối cùng là Oldpeak là giá trị số được đo bằng độ trầm cảm mặc dù có rất nhiều rất nhiều giá trị 0 nhưng hợp lý phép đo.
+
+##  2.Phân tích các yếu tố có ảnh hưởng như thế nào đối với bệnh tim ? đâu là những yếu tố chính gây ra bệnh tim ?
+    
+    - Biến dự đoán (X) : 11 biến (Age,Sex,ChestPainType,RestingBP,Cholesterol,FastingBS,RestingECG,MaxHR,ExerciseAngina,Oldpeak,ST_Slope )
+    - Biến kết quả (Y) : HeartDisease 
+    - Ý nghĩa : từ phân tích này chúng ta thấy được một cách tổng quan về các yếu tố ảnh hưởng đến bệnh tim , từ biểu đồ rút ra kết luận về các yếu tố chủ yếu gây nên bệnh tim .
+    - Biểu đồ có thể sử dụng : Điểm , đường .
+    - Phương pháp sử dụng : Thống kê mô tả (Mô tả mối quan hệ của hai biến phân loại , Mô tả phân bố của một biến số theo các nhóm của một biến phân loại).
+
+
+    
+## Giải quyết:   
+  Để có thể thấy được một cách tổng quan về các yếu tố ảnh hưởng đến bệnh tim, ta có thể xem qua ma trận tương quan:
+```{r}
+    pairs.panels(dataheart)
+```
+Thay các khoảng trống bằng NA và thay đổi giá trị ExerciseAgina 1 = Y, 0 = N   
+
+
+```{r}
+  heart <- dataheart
+  heart = heart %>% 
+  mutate(
+         across(everything(), ~ifelse(.x == "", NA, .x)),
+         ExerciseAngina = case_when(ExerciseAngina == "Y" ~ 1,
+                                     ExerciseAngina == "N" ~ 0))
+```
+
+Tiến hành chia tập dữ liệu thành 2 phần: 70% train, 30% test,   
+Tách dữ liệu và chia đều dựa trên biến kết quả HeartDisease:   
+
+```{r}
+  split = createDataPartition(heart$HeartDisease, p = .7, list = F)
+
+  train = data.frame(heart[ split, ])
+  test = data.frame(heart[-split, ])
+```
+
+Hàm đếm số lượng cho biến phân loại:  
+
+```{r}
+  counter = function(df, varname) {
+  df %>% 
+    count({{varname}}) %>% 
+    mutate(pct = round(n / sum(n), 2)) %>% 
+    arrange(-n)
+}
+```
+
+
+```{r}
+  counter(train, HeartDisease)
+  counter(test, HeartDisease)
+```
+
+
+   
+Thiết lập mô hình của mình với các thông số để xác nhận chéo 10 lần lặp lại, lưới điều chỉnh tùy chỉnh và chính mô hình. Đối với vấn đề phân loại nhị phân này, sử dụng tăng cường độ dốc ngẫu nhiên, là một phiên bản sửa đổi của tăng cường độ dốc cổ điển thực hiện tổng hợp bootstrap ('đóng gói') ở mỗi lần lặp lại mô hình. Tiến hành training   
+```{r include=FALSE}
+  control_gbm = trainControl(method = "repeatedcv",
+                           number = 10,
+                           repeats = 10)
+  grid_gbm = expand.grid(interaction.depth = c(1, 3, 5),
+                       n.trees = (1:10) * 10,
+                       shrinkage = 0.1,
+                       n.minobsinnode = 10)
+
+  model_gbm = train(HeartDisease ~ .,
+                  data = train,
+                  method = "gbm",
+                  tuneGrid = grid_gbm,
+                  trControl = control_gbm)
+```
+
+
+Xem biểu đồ thể hiện tầm quan trọng của các biến để xem biến nào có ảnh hưởng quan trọng nhất đối với biến HeartDisease:   
+
+```{r}
+  importance = varImp(model_gbm)
+
+ggplot(importance)
+```
+    
+
+## Từ ma trận có thể thấy 5 biến có ảnh hưởng đến bệnh tim nhất chính là: `Oldpeak`, `MaxHR`, `ExerciseAngina`, `ST_Slope` ,`ChestPainType`.  
+
+##  3.Có phải nữ có nguy cơ mắc bệnh tim cao hơn nam hay không ? 
+#### Phương pháp giải quyết.
+- Biến dự đoán (X) : Sex .
+- ý nghĩa : từ kiểm định này chúng ta có thể biết được giới tính có nguy cơ mắc bệnh tim cao hơn .
+- Phương pháp sử dụng : kiểm định thống kê (two sample t-test for two means (μ1,μ2)).
+
+```{r}
+not0 <- dataheart %>% filter(dataheart$HeartDisease == 1) 
+thehienbieudo <- sqldf('select sex,count(HeartDisease) as tong from not0 group by sex')
+ggplot(data = thehienbieudo, aes(x=Sex, y=tong))+
+  geom_bar(mapping = aes(x = Sex, y = tong), fill="steelblue"  ,stat="identity")+
+  geom_text(aes(label=tong), vjust=-0.3, size=3.5)+
+  theme_minimal()+
+  labs(x="Giới tính(M, F) ", y ="Số lượng mắc bệnh tim", title = "Biểu đồ cột thể hiện số bệnh nhân mắc bệnh tim theo giới tính")
+
+```
+
+
+
+## Lọc dữ liệu
+
+```{r}
+gf <- dataheart %>% filter(dataheart$Sex =="F")
+head(gf)
+gm <- dataheart %>% filter(dataheart$Sex =="M")
+head(gm)
+gf <- gf %>% filter(gf$HeartDisease == 1)
+head(gf)
+gm<- gm %>% filter(gm$HeartDisease == 1)
+head(gm)
+```
+
+
+
+
+## Kiểm định giả thuyết
+
+Dựa vào số thông kê trên thì ta có 193 nữ và 725 nam, trong đó số bệnh nhân bị bệnh tim là nữ là 50 bệnh nhân và số bệnh nhân bị bệnh tim mà là nam là 458 bệnh nhân. Dựa vào những dữ liệu trên chúng ta xem thử kết quả của câu hỏi như thế nào ?
+
+Gọi a là tỉ lệ số bệnh nhân bị bệnh tim là nữ
+Gọi b là tỉ lệ số bệnh nhân bị bệnh tim là nam
+Gọi n là số bệnh nhân nữ
+Gọi m là số bệnh nhân nam
+Ta có tỉ lệ bệnh nhân bị bệnh tim là nữ là p = 50/193
+      Tỉ lệ bệnh nhân bị bệnh tim là nam là q = 458/725
+      Để so sánh tị lệ giữa 2 giới tính ta cần kiểm tra giả thiết
+      Ho: a >= b
+      H1: a < b
+      Ta tính:
+```{r}
+m = 725
+n = 193
+f = ((50/193)*173 + (458/725))/(193+725)
+f
+f1 = 1  - f
+f1
+```
+Ta có Z =( p - q ) / sqrt(f*f1*(1/n + 1/ m))
+   
+```{r}
+z = ((50/193 - 458/725)) / (sqrt((f*f1)*((1/193)+(1/725))))
+z
+```
+Ta có mức tin cậy 95% với mức tin cậy này ta có Za = 1,65
+
+Ta có z = -21.20871 < -(Za = 1,65)
+Như vậy ta bác bỏ Ho vậy tỉ lệ bệnh nhân nam mắc bệnh trong tập dữ liệu lớn hơn bệnh nhân nữ mắc bệnh tim.
+
+
+
+
+##  4.Ước lượng độ tuổi có nguy cơ mắc bệnh tim cao ?
+    
+    - Biến dự đoán (X) : Age .
+    - Biến kết quả (Y) : HeartDisease .
+    - Ý nghĩa : từ phân tích này chúng ta biết được khoảng độ tuổi nào là có nguy cơ cao để từ đó có những lời khuyên phù hợp cho bệnh nhân .
+    - phương pháp sử dụng : Ước lượng population mean
+    
+```{r}
+ga <- dataheart %>% filter(dataheart$HeartDisease == 1)
+head(ga)
+
+mean(ga$Age)
+sqrt(var(ga$Age))
+gadall<- sqldf('SELECT Age,count(HeartDisease) as tong from dataheart group by Age ')
+head(gadall)
+gad<- sqldf('SELECT Age,count(HeartDisease) as tong from ga group by Age ')
+head(gad)
+tongbenhtim <- sqldf('SELECT sum(tong) from gad')
+head(tongbenhtim)
+ggplot(data =gad)+ 
+  geom_point(mapping =aes(x= Age, y = tong))+
+  geom_smooth(mapping = aes(x=Age, y = tong))+
+  labs(x="Độ tuổi ", y ="Số bệnh nhân bị bệnh tim")
+
+```
+ 
+ 
+ Sau khi lọc dữ liệu thì ta được độ tuổi của bệnh nhân trong tập dữ liệu nhỏ nhất là 28 tuổi và lớn nhất là 77 tuổi, mean và median lần lượt là 53,51 và 54.
+  Ta có số bệnh nhân mặc bệnh tim là 508 và độ tuổi từ 31 đến 77 tuổi
+
+  Phương sai và trung bình ta tính là:
+  Trung bình ta tinh được là 55.89961 và độ lệch chuẩn là 8.727056
+
+  Để ước lượng độ tuổi của bệnh nhân mắc bệnh tim ta có độ lệch chuẩn là 13,71131 trung bình là 54 và tổng số bệnh nhân mắc bệnh là 508.
+  Ta có Z = (Za/2)*ps /sqrt(tổng số bệnh nhân mắc bệnh) với mức tin cậy 95%, 99%.
+  
+```{r}
+Z = (1.96)*(8.727056/(sqrt(508)))
+Z
+z99 <- (2.58)*(8.727056/(sqrt(508)))
+z99
+```
+
+Vậy ta có độ tuổi mắc bệnh mắc bệnh tim sẽ là (55.89961 - 0.758913 = 55.140697, 55.89961 + 0.758913 = 56.658523) với mức tin cậy 95%
+  Độ tuổi mắc bệnh tim sẽ là (55.89961 - 0.9989773 = 54.9006327, 55.89961 + 0.9989773 = 56.8985873) với mức tin cậy là 99%
+
+
+
+##  5.Xây dựng mô hình chuẩn đoán bệnh suy tim dựa vào bộ dữ liệu **heart.csv** 
+    
+    - Để chuẩn đoán cần input là kết quả đo của bác sĩ là 11 biến (Age, Sex, ChestPainType, RestingBP, Choleserol, FastingBS, RestingECG, MaxHR, ExerciseAngina, Oldpeak, ST_Slope).
+    - kết quả là HeartDisease (1 : có nguy cơ mắc bệnh tim , 0 : không có nguy cơ mắc bệnh tim ) , xác suất chuẩn đoán là bao nhiêu ?
+    - Phương pháp sử dụng : Phân loại nhị phân SVM (Suport vector machine)
+    - Nguồn tham khảo : https://data-flair.training/blogs/e1071-in-r/
+    
+
+
+## Xử lý dữ liệu cho học máy
+```{r}
+# loai di cot thu 13 va chuyen du lieu của cot HeartDisease
+df <- dataheart[,-13]
+df$HeartDisease<-ifelse(df$HeartDisease==1,"Yes","No")
+df$HeartDisease<-as.factor(df$HeartDisease)
+table(df$HeartDisease)
+head(df)
+
+```
+
+
+## Biểu đồ thể hiện số ca mắc bệnh tim
+```{r}
+ggplot(data = df, 
+ mapping = aes(x = HeartDisease ,fill = HeartDisease)) +
+ geom_histogram(stat = "count")
+
+```
+
+
+
+## Kiểm tra các giá trị bị bỏ trống
+```{r}
+gg_miss_var(df)
+sum(is.na(df))
+
+```
+
+
+## Đưa các biến phân loại về thành các biến nhị phân
+```{r}
+xuly_df<-df %>% mutate(value = 1)  %>% spread(ChestPainType, value,  fill = 0 )
+xuly_df<-xuly_df %>% mutate(value = 1)  %>% spread(RestingECG, value,  fill = 0 )
+xuly_df<-xuly_df %>% mutate(value = 1)  %>% spread(ST_Slope, value,  fill = 0 )
+xuly_df$Sex<-as.factor(xuly_df$Sex)
+xuly_df$ExerciseAngina<-as.factor(xuly_df$ExerciseAngina)
+head(xuly_df)
+```
+
+
+
+## Sắp xếp lại dữ liệu trong dataframe
+```{r}
+
+normalize <- function(x) {
+    return((x - min(x)) / (max(x) - min(x)))
+}
+xuly_df2<-xuly_df
+xuly_df<-apply(xuly_df[,-c(2,7,9)],2,normalize)
+xuly_df<-as.data.frame(xuly_df)
+xuly_df$Sex<-xuly_df2$Sex
+xuly_df$ExerciseAngina<-xuly_df2$ExerciseAngina
+xuly_df$HeartDisease<-xuly_df2$HeartDisease
+
+head(xuly_df)
+
+```
+
+
+
+## Tạo mô hình svm
+### Chia tập dữ liệu thành 2 phần Test: 80% Train và 20% Test
+```{r}
+# Tập dữ liệu để train model
+train <- xuly_df[c(1:750),]
+x_train <-  train[,-19]
+y_train <-  train[,19]
+  
+# Tập dữ liệu để test model
+test  <-   xuly_df[-c(1:750),]
+x_test <-  test[,-19]
+y_test <-  test[,19]
+
+
+```
+
+
+## Train model dựa vào bộ dữ liệu train g̀ồm 750 đối tượng
+```{r}
+model_svm <- svm(HeartDisease ~ ., data=train)
+summary(model_svm)
+
+```
+
+
+
+## Thực hiện đánh giá trên bộ dữ liệu train
+
+```{r}
+pred <- predict(model_svm,x_train)
+confusionMatrix(pred,y_train)
+```
+
+
+## Thực hiện đánh giá trên bộ dữ liệu Test
+```{r}
+pred <- predict(model_svm,x_test)
+confusionMatrix(pred,y_test)
+
+```
+#### Nhận xét : Mô hình dự đoán đúng 91.6% trên dữ liệu train và dự đoán chính xác 76.05% trên bộ dữ liệu test .
+
+
+
+## Tạo mô hình Decision tree
+```{r}
+k <- 10
+# Generate folds.
+folds <- sample(k, size = nrow(xuly_df), replace = TRUE)
+
+predictions <- NULL
+groundTruth <- NULL
+for(i in 1:k){
+    train_df <- xuly_df[which(folds != i), ]
+    test_df <- xuly_df[which(folds == i), ]
+# Train the decision tree
+    treeClassifier <- rpart(HeartDisease ~ .,
+    train_df, xval=0)
+    foldPredictions <- predict(treeClassifier,
+    test_df, type = "class")
+    predictions <- c(predictions,
+    as.character(foldPredictions))
+    groundTruth <- c(groundTruth,as.character(test_df$HeartDisease))
+}
+```
+
+
+#### Kết quả thật sự
+```{r}
+result_test <- confusionMatrix(as.factor(predictions),as.factor(groundTruth))
+result_test
+```
+
+#### Đồ thị cây quyết định
+```{r}
+treeClassifier
+library(rpart.plot)
+# Plot the tree from the last fold. 
+rpart.plot(treeClassifier, digits=2,cex=1.2,varlen=0,fallen.leaves = F, legend.y = 3, box.palette=c("green", "red"))
+
+
+```
+
+
+## Tạo mô hình KNN
+
+#### Chuyển Sex và ExerciseAngina sang nhị phân 
+```{r}
+# Building for the KNN
+set.seed(123)
+sample<-sample.split(xuly_df,SplitRatio = 0.75)
+trainKNN <-subset(xuly_df,sample==T)
+testKNN <-subset(xuly_df,sample==F)
+trainKNN$Sex<-ifelse(trainKNN$Sex=="M",1,0)
+testKNN$Sex<-ifelse(testKNN$Sex=="M",1,0)
+trainKNN$ExerciseAngina<-ifelse(trainKNN$ExerciseAngina=="N",0,1)
+testKNN$ExerciseAngina<-ifelse(testKNN$ExerciseAngina=="N",0,1)
+head(trainKNN)
+
+```
+
+#### Train model
+
+```{r}
+fit_control<-trainControl(method = "repeatedcv",number = 50,
+                                   repeats=50)
+set.seed(123)
+model<-caret::train(HeartDisease~.,data=trainKNN,method="knn",trControl=fit_control,tuneGrid=expand.grid(k=13))
+
+```
+
+
+#### Kết quả
+```{r}
+model
+
+```
