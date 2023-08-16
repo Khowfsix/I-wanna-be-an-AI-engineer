@@ -326,5 +326,6 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 
+# gitignore file
 LuceneTutorial/
-Infomation Retrieval/Week8/
+Week8/
