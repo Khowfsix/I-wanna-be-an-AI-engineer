@@ -39,7 +39,7 @@ Action rationally:
 
 ### Basic Concept
 
-AI (agent) tác động 1  action nào đó vào môi trường (enviroment) làm envi thay đổi trạng thái từ $s \rightarrow s'$ và ngược lại môi trường cung cấp các percepts (observation) để agent biết được thông tin về môi trường
+AI (agent) tác động 1  action nào đó vào môi trường (enviroment) làm enviroment thay đổi trạng thái từ $s \rightarrow s'$ và ngược lại môi trường cung cấp các percepts (observation) để agent biết được thông tin về môi trường
 
 Sau vài action thì agent sẽ có reward để nó hướng tới kết quả
 
