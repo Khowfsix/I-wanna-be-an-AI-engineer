@@ -37,6 +37,21 @@ Action rationally:
 - Lý thuyết điều khiển
 
 
+### Basic Concept
+
+AI (agent) tác động 1  action nào đó vào môi trường (enviroment) làm envi thay đổi trạng thái từ $ s \rightarrow s' $ và ngược lại môi trường cung cấp các percepts (observation) để agent biết được thông tin về môi trường
+
+Sau vài action thì agent sẽ có reward để nó hướng tới kết quả
+
+> và Agent sẽ cố gắng có reward cao nhất
+
+$\rightarrow$ Thiết kế hệ thống chấm điểm hợp lý cho Agent
+
+Nên đưa chỉ dẫn chi tiết gợi ý chi tiết cho Agent, tuy nhiên phải đủ chứ không nên thiên về 1 hướng; 
+
+> Chi tiết thì tốt nhưng phải đầy đủ
+> Tập trung hướng tới mục đích cuối cùng
+
 
 ## 2. Uninform Search
 
