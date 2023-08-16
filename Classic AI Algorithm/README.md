@@ -26,6 +26,16 @@ Action rationally:
 
 > Tìm **solution** bằng 1 chuỗi các **action**
 
+### Cơ sở của AI
+
+- Triết học
+- Toán
+- Neuron science
+- Tâm lý học
+- Ngôn ngữ học
+- Kỹ thuật máy tính
+- Lý thuyết điều khiển
+
 
 
 ## 2. Uninform Search
