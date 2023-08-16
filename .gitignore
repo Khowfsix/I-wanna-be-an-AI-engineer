@@ -1,3 +1,18 @@
+
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+!.vscode/*.code-snippets
+
+# Local History for Visual Studio Code
+.history/
+
+# Built Visual Studio Code Extensions
+*.vsix
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -159,19 +174,6 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-!.vscode/*.code-snippets
-
-# Local History for Visual Studio Code
-.history/
-
-# Built Visual Studio Code Extensions
-*.vsix
-
 # Virtualenv
 # http://iamzed.com/2009/05/07/a-primer-on-virtualenv/
 .Python
@@ -184,6 +186,7 @@ cython_debug/
 pyvenv.cfg
 .venv
 pip-selfcheck.json
+
 
 # Compiled class file
 *.class
@@ -210,23 +213,6 @@ pip-selfcheck.json
 hs_err_pid*
 replay_pid*
 
-target/
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-pom.xml.next
-release.properties
-dependency-reduced-pom.xml
-buildNumber.properties
-.mvn/timing.properties
-# https://github.com/takari/maven-wrapper#usage-without-binary-jar
-.mvn/wrapper/maven-wrapper.jar
-
-# Eclipse m2e generated files
-# Eclipse Core
-.project
-# JDT-specific (Eclipse Java Development Tools)
-.classpath
 
 .metadata
 bin/
@@ -288,3 +274,57 @@ local.properties
 # Uncomment this line if you wish to ignore the project description file.
 # Typically, this file would be tracked if it contains build/dependency configurations:
 #.project
+
+
+# History files
+.Rhistory
+.Rapp.history
+
+# Session Data files
+.RData
+.RDataTmp
+
+# User-specific files
+.Ruserdata
+
+# Example code in package build process
+*-Ex.R
+
+# Output files from R CMD build
+/*.tar.gz
+
+# Output files from R CMD check
+/*.Rcheck/
+
+# RStudio files
+.Rproj.user/
+
+# produced vignettes
+vignettes/*.html
+vignettes/*.pdf
+
+# OAuth2 token, see https://github.com/hadley/httr/releases/tag/v0.3
+.httr-oauth
+
+# knitr and R markdown default cache directories
+*_cache/
+/cache/
+
+# Temporary files created by R markdown
+*.utf8.md
+*.knit.md
+
+# R Environment Variables
+.Renviron
+
+# pkgdown site
+docs/
+
+# translation temp files
+po/*~
+
+# RStudio Connect folder
+rsconnect/
+
+LuceneTutorial/
+Infomation Retrieval/Week8/
