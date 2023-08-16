@@ -327,7 +327,3 @@ po/*~
 rsconnect/
 
 # gitignore file
-LuceneTutorial/
-/InfomationRetrieval/Week 8/Part-1-Intro-to-Elasticsearch-and-Kibana/
-/InfomationRetrieval/Week 8/Part-2-Understanding-the-relevance-of-your-search-with-Elasticsearch-and-Kibana-/
-/InfomationRetrieval/Week 8/Part-3-Running-full-text-queries-and-combined-queries-with-Elasticsearch-and-Kibana/
