@@ -80,7 +80,7 @@ Nên đưa chỉ dẫn chi tiết gợi ý chi tiết cho Agent, tuy nhiên ph�
 
 ### Breadth first search
 
-![image-20230817152753812](D:\AI\I-wanna-be-an-AI-engineer\assets\image-20230817152753812.png)
+![image-20230817152753812](../assets/image-20230817152753812.png)
 
 - Chọn 1 node gốc, mở rộng nó ra đầu tiên
 - Mở rộng tất các các node con của node gốc 
