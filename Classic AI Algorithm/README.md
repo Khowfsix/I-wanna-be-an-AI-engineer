@@ -144,3 +144,61 @@ def breadth_first_graph_search(problem):
 
 
 
+Giống như BFS, khác ở chỗ đổi queue thành priority queue
+
+Nếu như state đó tồn tại trong Frontier rồi mà có cost lớn hơn thì thế bằng node hiện tại
+
+#### Đánh giá
+
+Optimal cho mọi trường hợp
+
+Chưa giải quyết được sự phức tạp của BFS
+
+### ***Depth first search***
+
+![image-20230819203839597](../assets/image-20230819203839597.png)
+
+- Mở rộng ở node sâu nhất trong frontier
+- Thay FIFO queue ở BFS thành LIFO queue (stack)
+
+#### Đánh giá:
+
+- Kết quả không optimal
+- Tốn ít bộ nhớ hơn BFS 
+- Không có tính complete: có trường hợp không tìm được solution nhưng đi vào nhánh vô hạn (infinite non-goal path)
+
+> Hướng giải quyết: độ sâu giới hạn
+
+### ***Depth limited search***
+
+![image-20230819210746010](../assets/image-20230819210746010.png)
+
+Cài đặt bằng đệ quy sẽ đơn giản và ngắn gọn hơn
+
+#### Vấn đề:
+
+- Đặt chiều sâu quá cạn: gặp cutoff trước khi gặp solution
+- Đặt chiều sâu quá lớn: kết quả trả về không optimal
+
+Giải pháp:
+
+> Cho chiều sâu tăng dần
+
+### ***Iterative deepening search***
+
+![image-20230819211829770](../assets/image-20230819211829770.png)
+
+Tăng dần chiều sâu
+
+#### Đánh giá:
+
+- Kết quả optimal
+- Tiết kiệm bộ nhớ
+- Ưu tiên được lựa chọn trong các bài toán tìm kiếm mù
+
+### ***So sánh các thuật toán***
+
+![image-20230819212136985](../assets/image-20230819212136985.png)
+
+![image-20230819212305390](../assets/image-20230819212305390.png)
+

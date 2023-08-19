@@ -23,8 +23,6 @@ def breadth_first_graph_search(problem):
     return None
 
 
-''' IMPLEMENT THE FOLLOWING FUNCTION '''
-
 
 def iterative_deepening_search(problem):
     """See [Figure 3.18] for the algorithm"""
