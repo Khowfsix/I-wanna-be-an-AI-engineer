@@ -40,7 +40,9 @@ def adjust_color(base_color, r_intensity, g_intensity, b_intensity):
 
 
 # Thiết lập giá trị và màu sắc cho các ô
-values = [3, 1, 2, 6, 0, 8, 7, 5, 4]
+# values = [3, 1, 2, 6, 0, 8, 7, 5, 4]
+values = [0,7,6,2,1,3,4,5,8]
+goal = [1,2,3,4,5,6,7,8,0]
 
 
 def tracking_color():
@@ -55,13 +57,14 @@ def tracking_color():
         if cell_value != 0:
             cell_value = int(cell_value)
             adjusted_color = adjust_color(
-                base_color  ,
+                base_color,
                 r_intensity * cell_value,
                 g_intensity * cell_value,
                 b_intensity * cell_value)
-            cells[int(i/3)][i%3].config(text=cell_value, bg=adjusted_color)
+            cells[int(i/3)][i % 3].config(text=cell_value, bg=adjusted_color)
         else:
-            cells[int(i/3)][i%3].config(text="", bg="#FFFFFF")
+            cells[int(i/3)][i % 3].config(text="", bg="#FFFFFF")
+
 
 tracking_color()
 
@@ -79,46 +82,98 @@ def sort_array_random():
         for j, cell in enumerate(row):
             cell.config(text=values[i * 3 + j])
     tracking_color()
+    update_textbox_content("")
 
+
+# Tạo khung cuộn
+scrollbar = tk.Scrollbar(window)
+scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
 # Tạo một ô văn bản không cho phép chỉnh sửa
-text_box = tk.Entry(window, state="readonly", bg="white", width=30)
+text_box = tk.Text(window,
+                   bg="white",
+                   width=10,
+                   yscrollcommand=scrollbar.set)
 text_box.pack(side="right", padx=10, pady=10)
-text_box.config(font=("Arial", 14))
+text_box.config(font=("Arial", 10))
+
+# Liên kết thanh cuộn với textbox
+scrollbar.config(command=text_box.yview)
 
 
-def sort_dfs():
+def update_textbox_content(solution):
+    global text_box
+    # Cho phép chỉnh sửa nội dung của textbox
+    text_box.configure(state=tk.NORMAL)
+    text_box.delete("1.0", tk.END)  # Xóa nội dung hiện tại của textbox
+    
+    if type(solution) == str:
+        text_box.insert(tk.END, solution)  # Chèn nội dung mới vào textbox
+    else:
+        for step in solution:
+            text_box.insert(tk.END, step + "\n")  # Chèn nội dung mới vào textbox
+            
+    text_box.configure(state=tk.DISABLED)  # Vô hiệu hóa chỉnh sửa của textbox
+
+
+def sort_bfs():
     global values
     state = tuple(values)
-    
+
     problem = PuzzleProblem(
         initial=state,
-        goal=(0, 1, 2, 3, 4, 5, 6, 7, 8))
-    
+        goal=tuple(goal))
+
     result = UnS.breadth_first_graph_search(problem)
-    
+
     print(result.solution())
-    
+
+    update_textbox_content(result.solution())
+
     for sort_state in result.path():
         values = list(sort_state.state)
         tracking_color()
         time.sleep(0.2)
         window.update()
+        
+        
+def sort_dfs():
+    global values
+    state = tuple(values)
+
+    problem = PuzzleProblem(
+        initial=state,
+        goal=tuple(goal))
+
+    result = UnS.iterative_deepening_search(problem)
+    
+    if result is not None:
+        
+        print(result.solution())
+
+        update_textbox_content(result.solution())
+
+        for sort_state in result.path():
+            values = list(sort_state.state)
+            tracking_color()
+            time.sleep(0.2)
+            window.update()
+    else:
+        print("No solution")
+        update_textbox_content("No solution")
+
 
 # Tạo nút chức năng sắp xếp ngẫu nhiên
 btn_sort_random = tk.Button(sort_buttons_container,
-                            text="Sort Random", command=sort_array_random)
+                            text="Random", command=sort_array_random)
 btn_sort_random.pack()
 
 # Tạo các nút khác
-button1 = tk.Button(window, text="Sorting with BFS", command=sort_dfs)
+button1 = tk.Button(window, text="Sorting with BFS", command=sort_bfs)
 button1.pack(side="top", padx=10, pady=10)
 
-button2 = tk.Button(window, text="Sorting with DFS")
+button2 = tk.Button(window, text="Sorting with DFS", command=sort_dfs)
 button2.pack(side="top", padx=10, pady=10)
-
-button3 = tk.Button(window, text="Sorting with DFS limited depth")
-button3.pack(side="top", padx=10, pady=10)
 
 
 # Chạy vòng lặp chính của ứng dụng
