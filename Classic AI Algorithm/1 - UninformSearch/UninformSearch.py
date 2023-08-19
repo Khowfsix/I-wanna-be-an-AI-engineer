@@ -1,6 +1,5 @@
 import sys
 from collections import deque
-from Puzzle import PuzzleProblem
 from Node import Node
 
 
@@ -66,22 +65,3 @@ def iterative_deepening_search(problem):
                     return child
                 frontier.append(child)
     return None
-
-
-def PuzzleMap():
-    pass
-
-
-if __name__ == '__main__':
-    import time
-
-    problem = PuzzleProblem(
-        initial=(3, 1, 2, 6, 0, 8, 7, 5, 4),
-        goal=(0, 1, 2, 3, 4, 5, 6, 7, 8))
-
-    result1 = breadth_first_graph_search(problem)
-    print(result1.solution())
-
-    # USE BELOW CODE TO TEST YOUR IMPLEMENTED FUNCTIONS
-    # result2 = iterative_deepening_search(problem)
-    # print(result2.solution())

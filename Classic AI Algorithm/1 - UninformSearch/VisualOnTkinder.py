@@ -1,11 +1,14 @@
+import time
 import tkinter as tk
 import random
+from Puzzle import PuzzleProblem
+import UninformSearch as UnS
 
 # Tạo một đối tượng cửa sổ
 window = tk.Tk()
 
 # Thiết lập tiêu đề cho cửa sổ
-window.title("Sorting Buttons Example")
+window.title("Puzzle")
 
 # Tạo một lưới để chứa các ô
 grid = tk.Frame(window)
@@ -22,10 +25,11 @@ for i in range(3):
         row.append(cell)
     cells.append(row)
 
-# Hàm điều chỉnh màu
-
 
 def adjust_color(base_color, r_intensity, g_intensity, b_intensity):
+    """
+        Hàm điều chỉnh màu
+    """
     base_color = base_color.lstrip("#")
     r, g, b = tuple(int(base_color[i:i + 2], 16) for i in (0, 2, 4))
     r = min(255, max(0, r + r_intensity))
@@ -36,69 +40,86 @@ def adjust_color(base_color, r_intensity, g_intensity, b_intensity):
 
 
 # Thiết lập giá trị và màu sắc cho các ô
-values = [[1, 2, 3], [4, 5, 6], [7, 8, ""]]
-base_color = "#FFD700"  # Màu vàng cơ sở
-r_intensity = -30  # Điều chỉnh thành phần màu đỏ
-g_intensity = 30  # Điều chỉnh thành phần màu xanh lá cây
-b_intensity = 0  # Điều chỉnh thành phần màu xanh dương
-for i in range(3):
-    for j in range(3):
-        cell_value = values[i][j]
-        if cell_value != "":
+values = [3, 1, 2, 6, 0, 8, 7, 5, 4]
+
+
+def tracking_color():
+    base_color = "#FFD700"  # Màu vàng cơ sở
+    r_intensity = -30  # Điều chỉnh thành phần màu đỏ
+    g_intensity = 30  # Điều chỉnh thành phần màu xanh lá cây
+    b_intensity = 0  # Điều chỉnh thành phần màu xanh dương
+
+    # Update màu theo giá trị ô
+    for i in values:
+        cell_value = values[i]
+        if cell_value != 0:
             cell_value = int(cell_value)
             adjusted_color = adjust_color(
-                base_color, r_intensity * cell_value, g_intensity * cell_value, b_intensity * cell_value)
-            cells[i][j].config(text=cell_value, bg=adjusted_color)
+                base_color  ,
+                r_intensity * cell_value,
+                g_intensity * cell_value,
+                b_intensity * cell_value)
+            cells[int(i/3)][i%3].config(text=cell_value, bg=adjusted_color)
+        else:
+            cells[int(i/3)][i%3].config(text="", bg="#FFFFFF")
+
+tracking_color()
 
 # Container chứa nút chức năng sắp xếp
 sort_buttons_container = tk.Frame(window)
 sort_buttons_container.pack(side="right")
 
-# Hàm sắp xếp mảng theo thứ tự tăng dần
-
-
-def sort_array_asc():
-    values_flat = [cell["text"] for row in cells for cell in row]
-    values_flat.sort()
-    for i, row in enumerate(cells):
-        for j, cell in enumerate(row):
-            cell.config(text=values_flat[i * 3 + j])
-
-# Hàm sắp xếp mảng theo thứ tự giảm dần
-
-
-def sort_array_desc():
-    values_flat = [cell["text"] for row in cells for cell in row]
-    values_flat.sort(reverse=True)
-    for i, row in enumerate(cells):
-        for j, cell in enumerate(row):
-            cell.config(text=values_flat[i * 3 + j])
-
-# Hàm sắp xếp mảng theo thứ tự ngẫu nhiên
-
 
 def sort_array_random():
-    values_flat = [cell["text"] for row in cells for cell in row]
-    random.shuffle(values_flat)
+    """
+        Hàm sắp xếp mảng theo thứ tự ngẫu nhiên
+    """
+    random.shuffle(values)
     for i, row in enumerate(cells):
         for j, cell in enumerate(row):
-            cell.config(text=values_flat[i * 3 + j])
+            cell.config(text=values[i * 3 + j])
+    tracking_color()
 
 
-# Tạo nút chức năng sắp xếp tăng dần
-btn_sort_asc = tk.Button(sort_buttons_container,
-                         text="Sort Asc", command=sort_array_asc)
-btn_sort_asc.pack()
+# Tạo một ô văn bản không cho phép chỉnh sửa
+text_box = tk.Entry(window, state="readonly", bg="white", width=30)
+text_box.pack(side="right", padx=10, pady=10)
+text_box.config(font=("Arial", 14))
 
-# Tạo nút chức năng sắp xếp giảm dần
-btn_sort_desc = tk.Button(sort_buttons_container,
-                          text="Sort Desc", command=sort_array_desc)
-btn_sort_desc.pack()
+
+def sort_dfs():
+    global values
+    state = tuple(values)
+    
+    problem = PuzzleProblem(
+        initial=state,
+        goal=(0, 1, 2, 3, 4, 5, 6, 7, 8))
+    
+    result = UnS.breadth_first_graph_search(problem)
+    
+    print(result.solution())
+    
+    for sort_state in result.path():
+        values = list(sort_state.state)
+        tracking_color()
+        time.sleep(0.2)
+        window.update()
 
 # Tạo nút chức năng sắp xếp ngẫu nhiên
 btn_sort_random = tk.Button(sort_buttons_container,
                             text="Sort Random", command=sort_array_random)
 btn_sort_random.pack()
+
+# Tạo các nút khác
+button1 = tk.Button(window, text="Sorting with BFS", command=sort_dfs)
+button1.pack(side="top", padx=10, pady=10)
+
+button2 = tk.Button(window, text="Sorting with DFS")
+button2.pack(side="top", padx=10, pady=10)
+
+button3 = tk.Button(window, text="Sorting with DFS limited depth")
+button3.pack(side="top", padx=10, pady=10)
+
 
 # Chạy vòng lặp chính của ứng dụng
 window.mainloop()
