@@ -113,7 +113,7 @@ Optimal có điều kiện
 
 Tốn kém về thời gian và bộ nhớ
 
-#### Code python:
+#### Code Python:
 
 ```python
 def breadth_first_graph_search(problem):
@@ -175,6 +175,39 @@ Chưa giải quyết được sự phức tạp của BFS
 
 Cài đặt bằng đệ quy sẽ đơn giản và ngắn gọn hơn
 
+#### Code Python:
+
+```python
+def depth_limited_search(problem, limit=50):
+    """See [Figure 3.17] for the algorithm"""
+    node = Node(problem.initial)
+    return recursive_dls(node, problem, limit)
+
+
+def recursive_dls(node, problem, depth_limit):
+    # Kiểm tra có phải goal không
+    if problem.goal_test(node.state):
+        return node
+    # Nếu limit == 0 thì cut off
+    elif depth_limit == 0:
+        return None
+    else:
+        cutoff_occured = False
+        # frontier = deque([node])
+        # explored = set()
+        
+        for action in problem.actions(node.state):
+            child = node.child_node(problem, action)
+            result = recursive_dls(child, problem, depth_limit - 1)
+            if result is not None:
+                return result
+            cutoff_occured = True
+            
+        if cutoff_occured:
+            return None
+    return None
+```
+
 #### Vấn đề:
 
 - Đặt chiều sâu quá cạn: gặp cutoff trước khi gặp solution
@@ -189,6 +222,18 @@ Giải pháp:
 ![image-20230819211829770](../assets/image-20230819211829770.png)
 
 Tăng dần chiều sâu
+
+#### Code Python:
+
+```python
+def iterative_deepening_search(problem):
+    """See [Figure 3.18] for the algorithm"""
+    for depth_limit in range(sys.maxsize):  # Iterate with increasing depth limit
+        result = depth_limited_search(problem, depth_limit)
+        if result is not None:  # Goal node found
+            return result
+    return None
+```
 
 #### Đánh giá:
 
