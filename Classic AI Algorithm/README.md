@@ -140,3 +140,7 @@ def breadth_first_graph_search(problem):
 
 ### ***Uniform-cost search***
 
+![image-20230819192510841](..\assets\image-20230819192510841.png)
+
+
+

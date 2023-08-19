@@ -40,9 +40,9 @@ def adjust_color(base_color, r_intensity, g_intensity, b_intensity):
 
 
 # Thiết lập giá trị và màu sắc cho các ô
-# values = [3, 1, 2, 6, 0, 8, 7, 5, 4]
-values = [0,7,6,2,1,3,4,5,8]
-goal = [1,2,3,4,5,6,7,8,0]
+values = [3, 1, 2, 6, 0, 8, 7, 5, 4]
+# values = [0,7,6,2,1,3,4,5,8]
+goal = [0,1,2,3,4,5,6,7,8]
 
 
 def tracking_color():
@@ -133,7 +133,7 @@ def sort_bfs():
     for sort_state in result.path():
         values = list(sort_state.state)
         tracking_color()
-        time.sleep(0.2)
+        time.sleep(0.1)
         window.update()
         
         
@@ -156,7 +156,7 @@ def sort_dfs():
         for sort_state in result.path():
             values = list(sort_state.state)
             tracking_color()
-            time.sleep(0.2)
+            time.sleep(0.1)
             window.update()
     else:
         print("No solution")
@@ -164,15 +164,15 @@ def sort_dfs():
 
 
 # Tạo nút chức năng sắp xếp ngẫu nhiên
-btn_sort_random = tk.Button(sort_buttons_container,
-                            text="Random", command=sort_array_random)
-btn_sort_random.pack()
+# btn_sort_random = tk.Button(sort_buttons_container,
+#                             text="Random", command=sort_array_random)
+# btn_sort_random.pack()
 
 # Tạo các nút khác
 button1 = tk.Button(window, text="Sorting with BFS", command=sort_bfs)
 button1.pack(side="top", padx=10, pady=10)
 
-button2 = tk.Button(window, text="Sorting with DFS", command=sort_dfs)
+button2 = tk.Button(window, text="Sorting with IDS", command=sort_dfs)
 button2.pack(side="top", padx=10, pady=10)
 
 
