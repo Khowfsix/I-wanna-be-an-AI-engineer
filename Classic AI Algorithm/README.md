@@ -52,6 +52,17 @@ Nên đưa chỉ dẫn chi tiết gợi ý chi tiết cho Agent, tuy nhiên ph�
 > Chi tiết thì tốt nhưng phải đầy đủ
 > Tập trung hướng tới mục đích cuối cùng
 
+### *Cách đánh giá 1 thuật toán*
+
+**Completeness:** luôn tìm ra solution nếu như solution tồn tại
+
+**Optimality:** 
+
+- thuật toán luôn trả ra kết quả optimal;
+- 1 thuật toán phải comleteness mới optimal 
+
+**Complexity:** độ phức tạp
+
 
 ## 2. Uninformed search
 
@@ -78,7 +89,7 @@ Nên đưa chỉ dẫn chi tiết gợi ý chi tiết cho Agent, tuy nhiên ph�
   - Nhanh hơn
   - Nhưng phải cung cấp dữ liệu
 
-### Breadth first search
+### ***Breadth first search***
 
 ![image-20230817152753812](../assets/image-20230817152753812.png)
 
@@ -92,5 +103,40 @@ Nên đưa chỉ dẫn chi tiết gợi ý chi tiết cho Agent, tuy nhiên ph�
 - parent: node cha của node này
 - action: hành động dẫn đến node này  ==>  để truy solution
 - path-cost: từ initial state đến đây
-- Hàm **Child Node**(problem, parent, action): ==> node
+- Hàm **Child Node**(problem, parent, action): ==> node 
+
+#### Đánh giá
+
+BFS có thể đưa ra solution tốt nhất nếu path cost là 1 hàm không giảm theo chiều sâu (càng sâu thì path cost càng lớn)
+
+Optimal có điều kiện
+
+Tốn kém về thời gian và bộ nhớ
+
+#### Code python:
+
+```python
+def breadth_first_graph_search(problem):
+    """Bread first search (GRAPH SEARCH version)
+    See [Figure 3.11] for the algorithm"""
+
+    node = Node(problem.initial)
+    if problem.goal_test(node.state):
+        return node
+    frontier = deque([node])
+    explored = set()
+    while frontier:
+        node = frontier.popleft()
+        explored.add(node.state)
+        for child in node.expand(problem):
+            if child.state not in explored and child not in frontier:
+                if problem.goal_test(child.state):
+                    return child
+                frontier.append(child)
+    return None
+```
+
+
+
+### ***Uniform-cost search***
 
