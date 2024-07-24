@@ -1,28 +1,26 @@
 # Thuật toán AI cổ điển
 
-
 ## 1. Basic concept
 
+### 4 cách tiếp cận (trường phái) của AI của AI
 
-### 4 cách tiếp cận (trường phái) của AI của AI:
 Thinking humanly
 
 > - AI suy nghĩ như con người
 > - ANN (neron)
 > - Watching thought
 
-Thinking rationally: 
-    
-> Không cần suy nghĩ như con người, chỉ cần suy nghĩ theo hướng logic toán học 
+Thinking rationally:
 
-Action humanly: 
+> Không cần suy nghĩ như con người, chỉ cần suy nghĩ theo hướng logic toán học
+
+Action humanly:
 
 > - Không quan tâm thuật toán bên dưới, chỉ cần hành động diễn ra đúng là được
 > - Thí nghiệm: Turing dest
 > - Nhiều hạn chế, dễ bị qua mặt, giả AI (sử dụng mẹo)
 
-
-Action rationally: 
+Action rationally:
 
 > Tìm **solution** bằng 1 chuỗi các **action**
 
@@ -36,7 +34,6 @@ Action rationally:
 - Kỹ thuật máy tính
 - Lý thuyết điều khiển
 
-
 ### Basic Concept
 
 AI (agent) tác động 1 action nào đó vào môi trường (enviroment) làm enviroment thay đổi trạng thái từ s => s' và ngược lại môi trường cung cấp các percepts (observation) để agent biết được thông tin về môi trường
@@ -47,7 +44,7 @@ Sau vài action thì agent sẽ có reward để nó hướng tới kết quả
 
 ==> Thiết kế hệ thống chấm điểm hợp lý cho Agent
 
-Nên đưa chỉ dẫn chi tiết gợi ý chi tiết cho Agent, tuy nhiên phải đủ chứ không nên thiên về 1 hướng; 
+Nên đưa chỉ dẫn chi tiết gợi ý chi tiết cho Agent, tuy nhiên phải đủ chứ không nên thiên về 1 hướng;
 
 > Chi tiết thì tốt nhưng phải đầy đủ
 > Tập trung hướng tới mục đích cuối cùng
@@ -56,13 +53,12 @@ Nên đưa chỉ dẫn chi tiết gợi ý chi tiết cho Agent, tuy nhiên ph�
 
 **Completeness:** luôn tìm ra solution nếu như solution tồn tại
 
-**Optimality:** 
+**Optimality:**
 
 - thuật toán luôn trả ra kết quả optimal;
-- 1 thuật toán phải comleteness mới optimal 
+- 1 thuật toán phải comleteness mới optimal
 
 **Complexity:** độ phức tạp
-
 
 ## 2. Uninformed search
 
@@ -94,16 +90,16 @@ Nên đưa chỉ dẫn chi tiết gợi ý chi tiết cho Agent, tuy nhiên ph�
 ![image-20230817152753812](../assets/image-20230817152753812.png)
 
 - Chọn 1 node gốc, mở rộng nó ra đầu tiên
-- Mở rộng tất các các node con của node gốc 
+- Mở rộng tất các các node con của node gốc
 - Tiếp tục mở rộng các node con của nó
 
-#### 1 thành phần của node:
+#### 1 thành phần của node
 
 - state: trạng thái hiện tại
 - parent: node cha của node này
 - action: hành động dẫn đến node này  ==>  để truy solution
 - path-cost: từ initial state đến đây
-- Hàm **Child Node**(problem, parent, action): ==> node 
+- Hàm **Child Node**(problem, parent, action): ==> node
 
 #### Đánh giá
 
@@ -113,7 +109,7 @@ Optimal có điều kiện
 
 Tốn kém về thời gian và bộ nhớ
 
-#### Code Python:
+#### Code Python
 
 ```python
 def breadth_first_graph_search(problem):
@@ -136,13 +132,9 @@ def breadth_first_graph_search(problem):
     return None
 ```
 
-
-
 ### ***Uniform-cost search***
 
 ![image-20230819192510841](../assets/image-20230819192510841.png)
-
-
 
 Giống như BFS, khác ở chỗ đổi queue thành priority queue
 
@@ -161,10 +153,10 @@ Chưa giải quyết được sự phức tạp của BFS
 - Mở rộng ở node sâu nhất trong frontier
 - Thay FIFO queue ở BFS thành LIFO queue (stack)
 
-#### Đánh giá:
+#### Đánh giá
 
 - Kết quả không optimal
-- Tốn ít bộ nhớ hơn BFS 
+- Tốn ít bộ nhớ hơn BFS
 - Không có tính complete: có trường hợp không tìm được solution nhưng đi vào nhánh vô hạn (infinite non-goal path)
 
 > Hướng giải quyết: độ sâu giới hạn
@@ -175,7 +167,7 @@ Chưa giải quyết được sự phức tạp của BFS
 
 Cài đặt bằng đệ quy sẽ đơn giản và ngắn gọn hơn
 
-#### Code Python:
+#### Code Python
 
 ```python
 def depth_limited_search(problem, limit=50):
@@ -208,7 +200,7 @@ def recursive_dls(node, problem, depth_limit):
     return None
 ```
 
-#### Vấn đề:
+#### Vấn đề
 
 - Đặt chiều sâu quá cạn: gặp cutoff trước khi gặp solution
 - Đặt chiều sâu quá lớn: kết quả trả về không optimal
@@ -223,7 +215,7 @@ Giải pháp:
 
 Tăng dần chiều sâu
 
-#### Code Python:
+#### Code Python
 
 ```python
 def iterative_deepening_search(problem):
@@ -235,7 +227,7 @@ def iterative_deepening_search(problem):
     return None
 ```
 
-#### Đánh giá:
+#### Đánh giá
 
 - Kết quả optimal
 - Tiết kiệm bộ nhớ
@@ -248,4 +240,3 @@ def iterative_deepening_search(problem):
 ![image-20230819212305390](../assets/image-20230819212305390.png)
 
 ## 3. Informed Search
-

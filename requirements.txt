@@ -6,3 +6,5 @@ tensorflow
 keras
 nltk
 sympy
+seaborn
+opencv-python
