@@ -247,3 +247,5 @@ def iterative_deepening_search(problem):
 
 ![image-20230819212305390](../assets/image-20230819212305390.png)
 
+## 3. Informed Search
+
