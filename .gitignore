@@ -25,3 +25,7 @@
 pyvenv.cfg
 .venv
 pip-selfcheck.json
+
+*.mp4
+*.avi
+*.mov
