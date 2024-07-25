@@ -1,0 +1,28 @@
+# Fdb version 4
+["pdflatex"] 1721879151.63265 "f:/ai/I-wanna-be-an-AI-engineer/Document/learningDoc.tex" "learningDoc.pdf" "learningDoc" 1721879152.49207 2
+  "c:/texlive/2024/texmf-dist/fonts/map/fontname/texfonts.map" 1721849062 3524 cb3e574dea2d1052e39280babc910dc8 ""
+  "c:/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmr10.tfm" 1721845459 1296 45809c5a464d5f32c8f98ba97c1bb47f ""
+  "c:/texlive/2024/texmf-dist/tex/latex/base/ifthen.sty" 1721851949 5525 3792dcd5bc92158cfaf00cc591e557cf ""
+  "c:/texlive/2024/texmf-dist/tex/latex/base/size11.clo" 1721851950 8464 6b4d01be31907866396cf4ac23881d2d ""
+  "c:/texlive/2024/texmf-dist/tex/latex/biblatex/biblatex.sty" 1721843873 533961 a8d65602d822bf3d3c823e6dc4922bbc ""
+  "c:/texlive/2024/texmf-dist/tex/latex/carlisle/ltxtable.sty" 1721844772 3948 ea0b5f84e55108cb6dd6d2d7de3aae02 ""
+  "c:/texlive/2024/texmf-dist/tex/latex/curve/curve.cls" 1721846421 28394 9dea3ad3105f41907460ade6f4024b1f ""
+  "c:/texlive/2024/texmf-dist/tex/latex/filehook/filehook-2020.sty" 1721848736 9005 c47d9138e4a690658bcefab0dd0af8d7 ""
+  "c:/texlive/2024/texmf-dist/tex/latex/filehook/filehook.sty" 1721848736 1210 95c2d0abf75beadf7e7547b73b345c24 ""
+  "c:/texlive/2024/texmf-dist/tex/latex/splitbib/splitbib.sty" 1721859359 28101 82c6b1e1ad45608d36dc37a708df2006 ""
+  "c:/texlive/2024/texmf-dist/tex/latex/tools/array.sty" 1721861354 14067 1383bd6ee23ab18ae0e796155404deb7 ""
+  "c:/texlive/2024/texmf-dist/tex/latex/tools/calc.sty" 1721861354 10214 61188260d324e94bc2f66825d7d3fdf4 ""
+  "c:/texlive/2024/texmf-dist/tex/latex/tools/longtable.sty" 1721861354 15033 652f156c2f139501300900190cae68c4 ""
+  "c:/texlive/2024/texmf-dist/tex/latex/tools/tabularx.sty" 1721861354 7243 e5dac1240636811edb77568b81818372 ""
+  "c:/texlive/2024/texmf-dist/web2c/texmf.cnf" 1721841969 42007 0b741a3c21a5ca32b40e3846e75b3548 ""
+  "c:/texlive/2024/texmf-var/web2c/pdftex/pdflatex.fmt" 1721863675 8239252 9ee911bd9593282a6c657835376a8257 ""
+  "c:/texlive/2024/texmf.cnf" 1721863449 713 e69b156964470283e0530f5060668171 ""
+  "f:/ai/I-wanna-be-an-AI-engineer/Document/learningDoc.tex" 1721879147 3904 b3c87ecb46650cf774f541da254c03cc ""
+  "learningDoc.aux" 1721879151 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
+  "learningDoc.tex" 1721879147 3904 b3c87ecb46650cf774f541da254c03cc ""
+  "settings.sty" 0 -1 0 ""
+  (generated)
+  "learningDoc.aux"
+  "learningDoc.log"
+  "learningDoc.pdf"
+  (rewritten before read)
