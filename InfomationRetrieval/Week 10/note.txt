@@ -1,9 +1,0 @@
-nhiều inlink thì quan trọng
-thuật toán pagerank: tập trung vào graph, ko cần duyệt nội dung
-1 trang quan trọng nếu được trỏ từ 1 trang quan trọng khác
-
-rank của trang j:
-r_j = \sum_{i \rightarrow j}{\frac{r_i}{d_i}}
-
-r_i: hạng
-d_i: số out link
