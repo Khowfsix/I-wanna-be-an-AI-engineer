@@ -16,5 +16,6 @@
         "editor.defaultFormatter": "ms-python.autopep8"
     },
     "python.formatting.provider": "none",
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "docker.make-runbook.openai-base": "Ollama"
 }
